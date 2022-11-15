@@ -29,6 +29,10 @@ func GenerateValidUser() *ValidUser {
 	return validUser
 }
 
+func (valid ValidUser) WebAuthnID() []byte {
+	return valid.ID
+}
+
 func (valid ValidUser) WebAuthnName() string {
 	return valid.Name
 }

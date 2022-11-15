@@ -41,7 +41,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/register/begin", routes.BeginRegistration(webAuthn, db)).Methods("GET")
+	router.HandleFunc("/registration/begin", routes.BeginRegistration(webAuthn, db)).Methods("GET")
 
 	serverAddress := ":7633"
 	log.Println("Starting server listening on port", serverAddress)

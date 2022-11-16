@@ -5,6 +5,8 @@ go 1.18
 require (
 	github.com/asdine/storm/v3 v3.2.1
 	github.com/duo-labs/webauthn v0.0.0-20220815211337-00c9fb5711f5
+	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/sessions v1.2.1
 )
 
 require (
@@ -33,9 +35,7 @@ require (
 	github.com/google/certificate-transparency-go v1.1.2-0.20210511102531-373a877eec92 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
-	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect

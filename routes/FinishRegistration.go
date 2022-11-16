@@ -7,16 +7,14 @@ import (
 
 	"github.com/asdine/storm/v3"
 	"github.com/augustabt/SingleAuthN/helpers"
-	"github.com/augustabt/SingleAuthN/models"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/sessions"
 )
 
 func FinishRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		validUser := &models.ValidUser{}
-		err := db.Get("user", "valid", validUser)
-		if err != nil {
+		validUser := helpers.GetValidUser(db, false)
+		if validUser == nil {
 			log.Println("Invalid Challenge")
 			helpers.SendJsonResponse(w, "Invalid Challenge", http.StatusBadRequest)
 			return

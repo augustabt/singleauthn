@@ -7,7 +7,6 @@ import (
 
 	"github.com/asdine/storm/v3"
 	"github.com/augustabt/SingleAuthN/helpers"
-	"github.com/augustabt/SingleAuthN/models"
 	"github.com/duo-labs/webauthn/protocol"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/sessions"
@@ -15,14 +14,7 @@ import (
 
 func BeginRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		validUser := &models.ValidUser{}
-		err := db.Get("user", "valid", validUser)
-
-		// If this is the first time this function has run, create and save a user
-		if err != nil {
-			validUser = models.GenerateValidUser()
-			db.Set("user", "valid", validUser)
-		}
+		validUser := helpers.GetValidUser(db, true)
 
 		registrationOptions := func(creationOptions *protocol.PublicKeyCredentialCreationOptions) {
 			creationOptions.CredentialExcludeList = validUser.CredentialExclusionList()

@@ -27,6 +27,11 @@
         fetch('http://localhost:7633/registration/begin').then((response) => response.json()).then((data) => {
           data.publicKey.challenge = bufferDecode(data.publicKey.challenge)
           data.publicKey.user.id = bufferDecode(data.publicKey.user.id)
+          if (data.publicKey.excludeCredentials) {
+            for (var i = 0; i < data.publicKey.excludeCredentials.length; i++) {
+              data.publicKey.excludeCredentials[i].id = bufferDecode(data.publicKey.excludeCredentials[i].id);
+            }
+          }
 
           navigator.credentials.create({
             publicKey: data.publicKey

@@ -39,7 +39,7 @@ func main() {
 	webAuthn, err := webauthn.New(&webauthn.Config{
 		RPDisplayName: "Change this later",
 		RPID:          "localhost",
-		RPOrigin:      "Origin URL for requests",
+		RPOrigin:      "http://localhost:7633",
 	})
 	if err != nil {
 		log.Fatal("Failed to create WebAuthn based on the provided config:", err)

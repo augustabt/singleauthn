@@ -45,7 +45,7 @@ func BeginRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore,
 		session, err := store.Get(r, "webauthn-session")
 		if err != nil {
 			log.Println(err)
-			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 

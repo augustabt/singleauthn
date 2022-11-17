@@ -38,8 +38,8 @@ func main() {
 	// Creating the webauthn object from duo-labs
 	webAuthn, err := webauthn.New(&webauthn.Config{
 		RPDisplayName: "Change this later",
-		RPID:          "localhost",
-		RPOrigin:      "http://localhost:7633",
+		RPID:          "augustabt.com",
+		RPOrigin:      "https://valid.augustabt.com",
 	})
 	if err != nil {
 		log.Fatal("Failed to create WebAuthn based on the provided config:", err)
@@ -53,10 +53,13 @@ func main() {
 
 	router.HandleFunc("/registration/begin", routes.BeginRegistration(webAuthn, store, db)).Methods("GET")
 	router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
+	router.HandleFunc("/login/begin", routes.BeginLogin(webAuthn, store, db)).Methods(http.MethodGet)
+	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, store, db)).Methods(http.MethodPost)
+	router.HandleFunc("/auth", routes.Auth(webAuthn, store, db)).Methods(http.MethodGet)
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("../../html"))))
 
-	serverAddress := ":7633"
+	serverAddress := "100.108.112.31:7633"
 	log.Println("Starting server listening on port", serverAddress)
 	log.Fatal(http.ListenAndServe(serverAddress, router))
 }

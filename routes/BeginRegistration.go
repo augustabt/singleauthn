@@ -22,29 +22,32 @@ func BeginRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore,
 
 		options, sessionData, err := webAuthn.BeginRegistration(validUser, registrationOptions)
 		if err != nil {
-			log.Println(err)
-			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
+			log.Println("Error calling webAuthn.BeginRegistration:", err)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		jsonSessionData, err := json.Marshal(sessionData)
 		if err != nil {
-			log.Println(err)
+			log.Println("Error marshaling sessionData:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		session, err := store.Get(r, "webauthn-session")
 		if err != nil {
-			log.Println(err)
+			log.Println("Error getting the webauthn-session:", err)
+			http.SetCookie(w, &http.Cookie{Name: "webauthn-session", MaxAge: -1})
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		session.Values["registration"] = jsonSessionData
+		session.Options.MaxAge = 120 // 2 Minutes to register
+		session.Options.Path = "/registration"
 		err = session.Save(r, w)
 		if err != nil {
-			log.Println(err)
+			log.Println("Error saving jsonSessionData to the session:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

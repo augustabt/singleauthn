@@ -15,36 +15,36 @@ func FinishRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore
 	return func(w http.ResponseWriter, r *http.Request) {
 		validUser := helpers.GetValidUser(db, false)
 		if validUser == nil {
-			log.Println("Invalid Challenge")
+			log.Println("Invalid Challenge, no valid user")
 			helpers.SendJsonResponse(w, "Invalid Challenge", http.StatusBadRequest)
 			return
 		}
 
 		session, err := store.Get(r, "webauthn-session")
 		if err != nil {
-			log.Println(err)
+			log.Println("Error getting the webauthn-session:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		jsonSessionData, ok := session.Values["registration"].([]byte)
 		if !ok {
-			log.Println("Invalid Challenge")
+			log.Println("Invalid Challenge, unable to retrieve jsonSessionData")
 			helpers.SendJsonResponse(w, "Invalid Challenge", http.StatusBadRequest)
 			return
 		}
 		sessionData := webauthn.SessionData{}
 		err = json.Unmarshal(jsonSessionData, &sessionData)
 		if err != nil {
-			log.Println(err)
+			log.Println("Error un-marshaling jsonSessionData:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		http.SetCookie(w, &http.Cookie{Name: "webauthn-session", MaxAge: -1, Path: "/"})
+		http.SetCookie(w, &http.Cookie{Name: "webauthn-session", MaxAge: -1})
 
 		credential, err := webAuthn.FinishRegistration(validUser, sessionData, r)
 		if err != nil {
-			log.Println("Error creating new authenticator")
+			log.Println("Error creating new authenticator:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}

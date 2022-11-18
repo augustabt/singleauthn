@@ -1,31 +1,18 @@
 package routes
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/asdine/storm/v3"
-	"github.com/augustabt/SingleAuthN/models"
+	"github.com/augustabt/SingleAuthN/helpers"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/sessions"
 )
 
 func Auth(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionStore, err := store.Get(r, "auth-session")
-		if err != nil {
-			redirectToLogin(w, r)
-			return
-		}
-
-		jsonSession, ok := sessionStore.Values["session"].([]byte)
-		if !ok {
-			redirectToLogin(w, r)
-			return
-		}
-		session := models.Session{}
-		err = json.Unmarshal(jsonSession, &session)
+		session, err := helpers.GetAuthSession(r, store)
 		if err != nil {
 			redirectToLogin(w, r)
 			return

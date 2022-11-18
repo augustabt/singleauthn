@@ -56,6 +56,7 @@ func main() {
 	router.HandleFunc("/login/begin", routes.BeginLogin(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, store, db)).Methods(http.MethodPost)
 	router.HandleFunc("/auth", routes.Auth(webAuthn, store, db)).Methods(http.MethodGet)
+	router.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusForbidden) }).Methods(http.MethodGet)
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("../../html"))))
 

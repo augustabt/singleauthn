@@ -7,6 +7,7 @@ import (
 
 	"github.com/asdine/storm/v3"
 	"github.com/augustabt/SingleAuthN/helpers"
+	"github.com/augustabt/SingleAuthN/models"
 	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/gorilla/sessions"
 )
@@ -46,6 +47,38 @@ func FinishLogin(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *s
 		if err != nil {
 			log.Println("Error logging in:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Need to add check for sign counter and update the sign counter of the stored credential.
+
+		// Create a new session that is valid for 12 hours
+		newSession := models.GenerateNewSession(43200)
+		jsonSession, err := json.Marshal(newSession)
+		if err != nil {
+			log.Println("Error marshaling session:", err)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		sessionStore, err := store.Get(r, "auth-session")
+		if err != nil {
+			log.Println("Error getting auth session cookie:", err)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		sessionStore.Options.MaxAge = 43200
+		sessionStore.Options.Domain = "augustabt.com"
+		sessionStore.Values["session"] = jsonSession
+		sessionStore.Save(r, w)
+		if err != nil {
+			log.Println("Error saving jsonSession to the session:", err)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = newSession.SaveSession(db)
+		if err != nil {
+			log.Println("Error saving session to db:", err)
+			helpers.SendJsonResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 

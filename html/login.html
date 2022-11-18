@@ -66,9 +66,17 @@
             },
             body: credentialJson,
           });
-          console.log(finishLoginResponse)
+          
+          if (finishLoginResponse.status === 200) {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            location.href = urlParams.get('rd');
+          } else {
+            location.href = 'https://valid.augustabt.com/forbidden'
+          }
         } catch(err) {
-          console.log('Login failed!');
+          location.href = 'https://valid.augustabt.com/forbidden'
         }
       }
     </script>

@@ -19,6 +19,8 @@ import (
 func main() {
 	origin, rpid := helpers.ParseDomain()
 
+	registrationMode := os.Getenv("REGISTRATION")
+
 	// Opening the database
 	db, err := storm.Open("../../data/storage.db")
 	if err != nil {
@@ -53,9 +55,12 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/registration", routes.ServeRegistration(origin)).Methods(http.MethodGet)
-	router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods("GET")
-	router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
+	if registrationMode == "TRUE" {
+		router.HandleFunc("/registration", routes.ServeRegistration(origin)).Methods(http.MethodGet)
+		router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods("GET")
+		router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
+	}
+
 	router.HandleFunc("/login", routes.ServeLogin()).Methods(http.MethodGet)
 	router.HandleFunc("/login/start", routes.StartLogin(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, rpid, store, db)).Methods(http.MethodPost)

@@ -50,7 +50,7 @@
       }
 
       async function loginUser() {
-        const beginLoginResponse = await fetch('https://valid.augustabt.com/login/begin');
+        const beginLoginResponse = await fetch('/login/start');
         let credentialRequestOptions = await beginLoginResponse.json();
         credentialRequestOptions = parseCredentialRequestOptions(credentialRequestOptions);
         console.log(credentialRequestOptions);
@@ -59,7 +59,7 @@
           const credential = await navigator.credentials.get(credentialRequestOptions);
           const credentialJson = credentialToJson(credential);
 
-          const finishLoginResponse = await fetch('https://valid.augustabt.com/login/finish', {
+          const finishLoginResponse = await fetch('/login/finish', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -73,10 +73,10 @@
 
             location.href = urlParams.get('rd');
           } else {
-            location.href = 'https://valid.augustabt.com/forbidden'
+            location.href = '/forbidden'
           }
         } catch(err) {
-          location.href = 'https://valid.augustabt.com/forbidden'
+          location.href = '/forbidden'
         }
       }
     </script>

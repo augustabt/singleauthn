@@ -51,13 +51,13 @@
       }
 
       async function registerUser() {
-        const beginRegistrationResponse = await fetch('https://valid.augustabt.com/registration/begin');
+        const beginRegistrationResponse = await fetch('/registration/start');
         let credentialCreationOptions = await beginRegistrationResponse.json();
         credentialCreationOptions = parseCredentialCreationOptions(credentialCreationOptions);
 
         let newCredential = await navigator.credentials.create(credentialCreationOptions);
         const credentialJson = credentialToJson(newCredential);
-        const finishRegistrationResponse = await fetch('https://valid.augustabt.com/registration/finish', {
+        const finishRegistrationResponse = await fetch('/registration/finish', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

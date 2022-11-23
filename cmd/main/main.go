@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	rpid, origin := helpers.ParseDomain()
+	origin, rpid := helpers.ParseDomain()
 
 	// Opening the database
 	db, err := storm.Open("../../data/storage.db")
@@ -53,14 +53,14 @@ func main() {
 
 	router := mux.NewRouter()
 
+	router.HandleFunc("/registration", routes.ServeRegistration(origin)).Methods(http.MethodGet)
 	router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods("GET")
 	router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
+	router.HandleFunc("/login", routes.ServeLogin()).Methods(http.MethodGet)
 	router.HandleFunc("/login/start", routes.StartLogin(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, store, db)).Methods(http.MethodPost)
 	router.HandleFunc("/auth", routes.Auth(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusForbidden) }).Methods(http.MethodGet)
-
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("../../html"))))
 
 	serverAddress := ":7633"
 	log.Println("Starting server listening on port", serverAddress)

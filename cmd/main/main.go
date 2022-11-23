@@ -17,6 +17,8 @@ import (
 )
 
 func main() {
+	rpid, origin := helpers.ParseDomain()
+
 	// Opening the database
 	db, err := storm.Open("../../data/storage.db")
 	if err != nil {
@@ -38,8 +40,8 @@ func main() {
 	// Creating the webauthn object from duo-labs
 	webAuthn, err := webauthn.New(&webauthn.Config{
 		RPDisplayName: "Change this later",
-		RPID:          "augustabt.com",
-		RPOrigin:      "https://valid.augustabt.com",
+		RPID:          rpid,
+		RPOrigin:      origin,
 	})
 	if err != nil {
 		log.Fatal("Failed to create WebAuthn based on the provided config:", err)
@@ -60,7 +62,7 @@ func main() {
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("../../html"))))
 
-	serverAddress := "100.108.112.31:7633"
+	serverAddress := ":7633"
 	log.Println("Starting server listening on port", serverAddress)
 	log.Fatal(http.ListenAndServe(serverAddress, router))
 }

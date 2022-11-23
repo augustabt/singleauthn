@@ -58,8 +58,8 @@ func main() {
 	router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
 	router.HandleFunc("/login", routes.ServeLogin()).Methods(http.MethodGet)
 	router.HandleFunc("/login/start", routes.StartLogin(webAuthn, store, db)).Methods(http.MethodGet)
-	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, store, db)).Methods(http.MethodPost)
-	router.HandleFunc("/auth", routes.Auth(webAuthn, store, db)).Methods(http.MethodGet)
+	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, rpid, store, db)).Methods(http.MethodPost)
+	router.HandleFunc("/auth", routes.Auth(webAuthn, origin, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusForbidden) }).Methods(http.MethodGet)
 
 	serverAddress := ":7633"

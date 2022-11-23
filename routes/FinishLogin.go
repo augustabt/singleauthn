@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-func FinishLogin(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
+func FinishLogin(webAuthn *webauthn.WebAuthn, rpid string, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		validUser := helpers.GetValidUser(db, false)
 		if validUser == nil {
@@ -67,7 +67,7 @@ func FinishLogin(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *s
 			return
 		}
 		sessionStore.Options.MaxAge = 43200
-		sessionStore.Options.Domain = "augustabt.com"
+		sessionStore.Options.Domain = rpid
 		sessionStore.Values["session"] = jsonSession
 		sessionStore.Save(r, w)
 		if err != nil {

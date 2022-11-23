@@ -23,7 +23,7 @@ func ParseDomain() (string, string) {
 		origin = fmt.Sprintf("%s://%s", parsedDomain.Scheme, parsedDomain.Hostname())
 	} else {
 		rpid = "localhost"
-		origin = "http://localhost"
+		origin = "http://localhost:7633"
 	}
 
 	return origin, rpid

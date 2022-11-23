@@ -71,7 +71,9 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
 
-            location.href = urlParams.get('rd');
+            if (urlParams.get('rd') != '') {
+              location.href = urlParams.get('rd');
+            }
           } else {
             location.href = '/forbidden'
           }

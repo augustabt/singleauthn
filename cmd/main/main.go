@@ -41,7 +41,7 @@ func main() {
 
 	// Creating the webauthn object from duo-labs
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: "Change this later",
+		RPDisplayName: "SingleAuthN",
 		RPID:          rpid,
 		RPOrigin:      origin,
 	})

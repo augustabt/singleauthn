@@ -22,8 +22,8 @@ func GenerateValidUser() *ValidUser {
 	validUser.ID = make([]byte, 8)
 	rand.Read(validUser.ID)
 
-	validUser.Name = "Default Name"
-	validUser.DisplayName = "This is a Name"
+	validUser.Name = "ValidUser"
+	validUser.DisplayName = "ValidUser"
 	validUser.Credentials = []webauthn.Credential{}
 
 	return validUser

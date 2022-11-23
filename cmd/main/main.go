@@ -53,9 +53,9 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/registration/begin", routes.BeginRegistration(webAuthn, store, db)).Methods("GET")
+	router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods("GET")
 	router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
-	router.HandleFunc("/login/begin", routes.BeginLogin(webAuthn, store, db)).Methods(http.MethodGet)
+	router.HandleFunc("/login/start", routes.StartLogin(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/login/finish", routes.FinishLogin(webAuthn, store, db)).Methods(http.MethodPost)
 	router.HandleFunc("/auth", routes.Auth(webAuthn, store, db)).Methods(http.MethodGet)
 	router.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusForbidden) }).Methods(http.MethodGet)

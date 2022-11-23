@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-func BeginRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
+func StartRegistration(webAuthn *webauthn.WebAuthn, store *sessions.CookieStore, db *storm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		validUser := helpers.GetValidUser(db, true)
 

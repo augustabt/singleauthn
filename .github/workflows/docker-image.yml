@@ -28,4 +28,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: augustabt/SingleAuthN:${{ github.event.release.tag_name }}
+          tags: augustabt/singleauthn:${{ github.event.release.tag_name }}

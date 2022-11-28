@@ -16,13 +16,22 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+func getDataPath() string {
+	// Running in docker
+	if _, err := os.Stat("/.dockerenv"); err == nil {
+		return "/data"
+	}
+
+	return "../../data"
+}
+
 func main() {
 	origin, rpid := helpers.ParseDomain()
 
 	registrationMode := os.Getenv("REGISTRATION")
 
 	// Opening the database
-	db, err := storm.Open("../../data/storage.db")
+	db, err := storm.Open(getDataPath() + "/storage.db")
 	if err != nil {
 		log.Fatal("Error opening or creating the database file:", err)
 	}

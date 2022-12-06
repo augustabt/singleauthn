@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"crypto/rand"
 
 	"github.com/duo-labs/webauthn/protocol"
@@ -51,6 +52,15 @@ func (valid ValidUser) WebAuthnCredentials() []webauthn.Credential {
 
 func (valid *ValidUser) AddCredentials(newCredential webauthn.Credential) {
 	valid.Credentials = append(valid.Credentials, newCredential)
+}
+
+func (valid *ValidUser) UpdateCredentialSignCount(credID []byte, signCount uint32) {
+	for i, cred := range valid.Credentials {
+		if bytes.Equal(cred.ID, credID) {
+			cred.Authenticator.SignCount = signCount
+			valid.Credentials[i] = cred
+		}
+	}
 }
 
 func (valid ValidUser) CredentialExclusionList() []protocol.CredentialDescriptor {

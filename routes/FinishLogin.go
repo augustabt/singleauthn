@@ -43,14 +43,21 @@ func FinishLogin(webAuthn *webauthn.WebAuthn, rpid string, store *sessions.Cooki
 		}
 		http.SetCookie(w, &http.Cookie{Name: "webauthn-session", MaxAge: -1})
 
-		_, err = webAuthn.FinishLogin(validUser, sessionData, r)
+		cred, err := webAuthn.FinishLogin(validUser, sessionData, r)
 		if err != nil {
 			log.Println("Error logging in:", err)
 			helpers.SendJsonResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		// Need to add check for sign counter and update the sign counter of the stored credential.
+		if cred.Authenticator.CloneWarning {
+			log.Println("Cloned authenticator tried to use for authentication")
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
+		validUser.UpdateCredentialSignCount(cred.ID, cred.Authenticator.SignCount)
+		db.Set("user", "valid", validUser)
 
 		// Create a new session that is valid for 12 hours
 		newSession := models.GenerateNewSession(43200)

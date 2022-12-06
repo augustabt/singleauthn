@@ -66,8 +66,8 @@ func main() {
 
 	if registrationMode == "TRUE" {
 		router.HandleFunc("/registration", routes.ServeRegistration(origin)).Methods(http.MethodGet)
-		router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods("GET")
-		router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods("POST")
+		router.HandleFunc("/registration/start", routes.StartRegistration(webAuthn, store, db)).Methods(http.MethodGet)
+		router.HandleFunc("/registration/finish", routes.FinishRegistration(webAuthn, store, db)).Methods(http.MethodPost)
 	}
 
 	router.HandleFunc("/login", routes.ServeLogin()).Methods(http.MethodGet)

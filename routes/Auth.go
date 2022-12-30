@@ -29,5 +29,6 @@ func Auth(webAuthn *webauthn.WebAuthn, origin string, store *sessions.CookieStor
 }
 
 func redirectToLogin(w http.ResponseWriter, r *http.Request, origin string) {
+	r.Header.Set("Cache-Control", "no-store")
 	http.Redirect(w, r, fmt.Sprintf("%s/login?rd=%s://%s%s", origin, r.Header.Get("x-forwarded-proto"), r.Header.Get("x-forwarded-host"), r.Header.Get("x-forwarded-uri")), http.StatusSeeOther)
 }

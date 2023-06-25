@@ -3,29 +3,26 @@ package models
 import (
 	"time"
 
-	"github.com/asdine/storm/v3"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Session struct {
-	ExpirationTime time.Time `json:"expirationTime"`
-	SessionKey     string    `json:"sessionKey"`
+	gorm.Model
+	ExpirationTime time.Time `gorm:"serializer:json"`
+	SessionKey     string    `gorm:"primaryKey"`
 }
 
-func GenerateNewSession(validTime time.Duration) Session {
+func GenerateSession(validTime time.Duration) Session {
 	return Session{
 		ExpirationTime: time.Now().Add(time.Second * validTime),
 		SessionKey:     uuid.NewString(),
 	}
 }
 
-func (session Session) SaveSession(db *storm.DB) error {
-	return db.Set("auth-sessions", session.SessionKey, &session)
-}
-
-func (session Session) ValidateSession(db *storm.DB) bool {
+func (session Session) ValidateSession(db *gorm.DB) bool {
 	storedSession := Session{}
-	err := db.Get("auth-sessions", session.SessionKey, &storedSession)
+	err := db.First(&storedSession, "id = ?", session.SessionKey)
 
 	if err != nil || storedSession.SessionKey != session.SessionKey || storedSession.ExpirationTime != session.ExpirationTime || session.IsExpired() {
 		return false

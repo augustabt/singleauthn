@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/augustabt/singleauthn/internal/models"
+	"github.com/augustabt/singleauthn/internal/model"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
@@ -19,7 +19,7 @@ func getDataPath() string {
 		return "/data"
 	}
 
-	return "../../data"
+	return "./data"
 }
 
 func main() {
@@ -31,8 +31,8 @@ func main() {
 		log.Fatal("Error opening or creating the database file:", err)
 	}
 
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Credential{})
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Credential{})
 
 	// Signal handler for saving the database when the program is terminated manually
 	sigint := make(chan os.Signal, 2)

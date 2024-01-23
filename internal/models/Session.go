@@ -13,9 +13,9 @@ type Session struct {
 	SessionKey     string    `gorm:"primaryKey"`
 }
 
-func GenerateSession(validTime time.Duration) Session {
+func GenerateSession(validityLength time.Duration) Session {
 	return Session{
-		ExpirationTime: time.Now().Add(time.Second * validTime),
+		ExpirationTime: time.Now().Add(time.Second * validityLength),
 		SessionKey:     uuid.NewString(),
 	}
 }

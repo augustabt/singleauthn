@@ -1,7 +1,10 @@
 package models
 
 import (
+	"crypto/rand"
 	"encoding/binary"
+	"log"
+	"strconv"
 
 	"gorm.io/gorm"
 
@@ -9,17 +12,23 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-// Struct that implements the duo-labs/webauthn user interface to store valid credentials
+// Struct that implements the webauthn user interface to store valid credentials
 type User struct {
 	gorm.Model
-	Username    string `gorm:"primaryKey"`
+	ID          string `gorm:"primaryKey"`
+	Username    string
 	IsAdmin     bool
 	Credentials []Credential
 }
 
 func (u User) WebAuthnID() []byte {
+	userID, err := strconv.ParseUint(u.ID, 10, 64)
+	if err != nil {
+		log.Fatal("Unable to parse userID", err)
+	}
+
 	webauthnID := make([]byte, 8)
-	binary.LittleEndian.PutUint64(webauthnID, uint64(u.ID))
+	binary.LittleEndian.PutUint64(webauthnID, userID)
 
 	return webauthnID
 }
@@ -48,7 +57,7 @@ func (u User) WebAuthnCredentials() []webauthn.Credential {
 
 func (u User) CredentialExclusionList() []protocol.CredentialDescriptor {
 	credentials := u.WebAuthnCredentials()
-	exclusionList := []protocol.CredentialDescriptor{}
+	exclusionList := make([]protocol.CredentialDescriptor, len(credentials))
 
 	for _, credential := range credentials {
 		descriptor := protocol.CredentialDescriptor{
@@ -60,4 +69,17 @@ func (u User) CredentialExclusionList() []protocol.CredentialDescriptor {
 	}
 
 	return exclusionList
+}
+
+func GenerateUserID() string {
+	id := make([]byte, 8)
+	n, err := rand.Read(id)
+
+	if (err != nil) || (n != 8) {
+		log.Fatal("Unable to generate a random user id", err)
+	}
+
+	userID := binary.LittleEndian.Uint64(id)
+
+	return strconv.FormatUint(userID, 10)
 }

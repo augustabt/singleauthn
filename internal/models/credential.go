@@ -9,7 +9,7 @@ type Credential struct {
 	gorm.Model
 	Name               string
 	WebauthnCredential webauthn.Credential `gorm:"serializer:json"`
-	UserID             uint
+	UserID             string
 }
 
 func (c *Credential) UpdateSignCount(db *gorm.DB, signCount uint32) {
